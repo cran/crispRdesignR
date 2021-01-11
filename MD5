@@ -1,13 +1,14 @@
-7f078cb860725b09a3492478c81b8c9a *DESCRIPTION
+eedd752f07ee242caf4aca183727a9b2 *DESCRIPTION
 76a4198e98a5218453583bb38bc04472 *NAMESPACE
 d37f285172e7f0d21a867e5f700dfc25 *R/Doench_2016_Processing.R
 3bcd1001fce9747d0606a29f7447d566 *R/FindsgRNAfunction.R
 ee75e6422d465e37b50e398cc396ab74 *R/crispRdesignRUI.R
 46163d9acd023f7e1ce8420f0c143afd *R/getofftargetdata.R
 4ab0e14b0163ab90b9a917f28f8a6829 *R/getsgRNAdata.R
-29b1eb3f6d2f1e6c2ca354e529683aac *R/sgRNA_design.R
+04a0a6a573168d54e8af0540d13b2dee *R/sgRNA_design.R
 5274ac3c7414304491b65d2d70a6c627 *R/sysdata.rda
-9d5b0b6d2c78fb41dda5f3a6d2f7a183 *inst/apps/RunShiny.R
+40c63a86cb14ac5ad93c7a6abf6aeb0e *README.md
+37b3596a72959fc7be95017a2e3fb2fb *inst/apps/RunShiny.R
 c77553957cf7cc1c8360ed2353d55a51 *inst/example_data/DAK1_short.txt
 c30772cce304156592ba5a8e31ee56ba *inst/example_data/ExampleDAK1seq.txt
 5c90f33289566446ef2fe98cc2c901ac *inst/example_data/Saccharomyces_cerevisiae.R64-1-1.92.gtf.gz
