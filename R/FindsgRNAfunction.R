@@ -38,8 +38,8 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
   setPAM <- userPAM
   revsetPAM <- Biostrings::reverseComplement(Biostrings::DNAString(userPAM))
   lengthPAM <- nchar(setPAM)
-  usesetPAM <- stringr::str_replace_all(setPAM, "N", ".")
-  revusesetPAM <- stringr::str_replace_all(revsetPAM, "N", ".")
+  usesetPAM <- stringr::str_replace_all(as.character(setPAM), "N", ".")
+  revusesetPAM <- stringr::str_replace_all(as.character(revsetPAM), "N", ".")
   lengthpostPAM <- (6 - lengthPAM)
   PAM <- paste("........................", usesetPAM, paste(rep(".", lengthpostPAM), sep ="", collapse =""), sep="", collapse ="")
   ## Searches all 23 nt streches in the sequence for
@@ -48,18 +48,18 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
   for (x in 1:num_char_in_seq){
     poss_sgRNA <- substr(sequence, x, 29+x)
     if (stringr::str_detect(poss_sgRNA, PAM) == TRUE){
-      sgRNA_list_f[[length(sgRNA_list_f)+1]] <- poss_sgRNA
-      sgRNA_f_start[[length(sgRNA_f_start)+1]] <- x+4
-      sgRNA_f_end[[length(sgRNA_f_end)+1]] <- x+26
+      sgRNA_list_f[length(sgRNA_list_f)+1] <- poss_sgRNA
+      sgRNA_f_start[length(sgRNA_f_start)+1] <- x+4
+      sgRNA_f_end[length(sgRNA_f_end)+1] <- x+26
     }
   }
   ## Same as above but with the reverse sequence
   for (x in 1:num_char_in_seq){
     poss_sgRNA <- substr(rev_seq, x, 29+x)
     if (stringr::str_detect(poss_sgRNA, PAM) == TRUE){
-      sgRNA_list_r[[length(sgRNA_list_r)+1]] <- poss_sgRNA
-      sgRNA_r_start[[length(sgRNA_r_start)+1]] <- nchar(rev_seq)-x-25
-      sgRNA_r_end[[length(sgRNA_r_end)+1]] <- nchar(rev_seq)-x-3
+      sgRNA_list_r[length(sgRNA_list_r)+1] <- poss_sgRNA
+      sgRNA_r_start[length(sgRNA_r_start)+1] <- nchar(rev_seq)-x-25
+      sgRNA_r_end[length(sgRNA_r_end)+1] <- nchar(rev_seq)-x-3
     }
   }
   ## Removes any sgRNA that contain degenerate bases
@@ -94,7 +94,7 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
     ## Find GC percentage for each sgRNA and puts that data into
     ## a list called "GCinstance"
     FindGC <- function(seqlist){
-      ((stringr::str_count(seqlist, "G") + stringr::str_count(seqlist, "C")) / 20)
+      ((stringr::str_count(as.character(seqlist), "G") + stringr::str_count(as.character(seqlist), "C")) / 20)
     }
     GCinstance <- sapply(sgRNA_seq, FindGC)
     ## Find homopolmers
@@ -122,15 +122,15 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
         if (SpeFindGC(test_region) >= .5) {
           if (r <= 10) {
             compcount <- Biostrings::countPattern(test_region, Biostrings::reverseComplement(Biostrings::DNAString(substr(testDNA, r+7, length(testDNA)))))
-            individ_comp_list[[length(individ_comp_list)+1]]  <- compcount
+            individ_comp_list[length(individ_comp_list)+1]  <- compcount
           }
           compcount <- Biostrings::countPattern(test_region, revcomp_backbone)
-          individ_comp_list[[length(individ_comp_list)+1]]  <- compcount
+          individ_comp_list[length(individ_comp_list)+1]  <- compcount
         } else {
-          individ_comp_list[[length(individ_comp_list)+1]] <- 0
+          individ_comp_list[length(individ_comp_list)+1] <- 0
         }
       }
-      self_comp_list[[length(self_comp_list)+1]] <- sum(as.numeric(individ_comp_list))
+      self_comp_list[length(self_comp_list)+1] <- sum(as.numeric(individ_comp_list))
     }
     ## Self Complementary check done
     ## Assign a study-based efficiency score based on the Doench 2016 paper and data
@@ -145,23 +145,23 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
     for (R in 1:length(sgRNA_seq)) {
       Individ_Notes <- c()
       if (GCinstance[R] >=.8) {
-        Individ_Notes[[length(Individ_Notes)+1]] <- "GC"
+        Individ_Notes[length(Individ_Notes)+1] <- "GC"
       } else if (GCinstance[R] >=.3) {
-        Individ_Notes[[length(Individ_Notes)+1]] <- "GC"
+        Individ_Notes[length(Individ_Notes)+1] <- "GC"
       }
       if (Homopolymerdetect[R] == TRUE) {
-        Individ_Notes[[length(Individ_Notes)+1]] <- "HP"
+        Individ_Notes[length(Individ_Notes)+1] <- "HP"
       }
       if (self_comp_list[R] > 0) {
-        Individ_Notes[[length(Individ_Notes)+1]] <- "SC"
+        Individ_Notes[length(Individ_Notes)+1] <- "SC"
       }
       if (Efficiency_Score[R] < 0.5) {
-        Individ_Notes[[length(Individ_Notes)+1]] <- "LE"
+        Individ_Notes[length(Individ_Notes)+1] <- "LE"
       }
       if (is.null(Individ_Notes)) {
-        Individ_Notes[[length(Individ_Notes)+1]] <- "N/A"
+        Individ_Notes[length(Individ_Notes)+1] <- "N/A"
       }
-      Notes[[length(Notes)+1]] <- paste(Individ_Notes, sep = ", ", collapse = ", ")
+      Notes[length(Notes)+1] <- paste(Individ_Notes, sep = ", ", collapse = ", ")
     }
     ## Ends the function and outputs data if off-target searching is skipped
     if (calloffs == "no_off") {
@@ -284,59 +284,59 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
           }
           if (length(off_info) > 0) {
             for (f in 1:length(off_info)) {
-              off_start[[length(off_start)+1]] <- BiocGenerics::start(off_info)[f]
-              off_end[[length(off_end)+1]] <- BiocGenerics::end(off_info)[f]+lengthPAM
-              off_direction[[length(off_direction)+1]] <- "+"
-              off_chr[[length(off_chr)+1]] <- seqname
-              off_mismatch[[length(off_mismatch)+1]] <- mis_info[f]
-              off_sgRNAseq[[length(off_sgRNAseq)+1]] <- as.character(pattern)
-              off_offseq[[length(off_offseq)+1]] <- as.character(off_info_full[f])
+              off_start[length(off_start)+1] <- BiocGenerics::start(off_info)[f]
+              off_end[length(off_end)+1] <- BiocGenerics::end(off_info)[f]+lengthPAM
+              off_direction[length(off_direction)+1] <- "+"
+              off_chr[length(off_chr)+1] <- seqname
+              off_mismatch[length(off_mismatch)+1] <- mis_info[f]
+              off_sgRNAseq[length(off_sgRNAseq)+1] <- as.character(pattern)
+              off_offseq[length(off_offseq)+1] <- as.character(off_info_full[f])
             }
           }
           if (length(rev_off_info) > 0) {
             for (f in 1:length(rev_off_info)) {
-              off_start[[length(off_start)+1]] <- BiocGenerics::start(rev_off_info)[f]-lengthPAM
-              off_end[[length(off_end)+1]] <- BiocGenerics::end(rev_off_info)[f]
-              off_direction[[length(off_direction)+1]] <- "-"
-              off_chr[[length(off_chr)+1]] <- seqname
-              off_mismatch[[length(off_mismatch)+1]] <- rev_mis_info[f]
-              off_sgRNAseq[[length(off_sgRNAseq)+1]] <- as.character(pattern)
-              off_offseq[[length(off_offseq)+1]] <- as.character(rev_off_info_full[f])
+              off_start[length(off_start)+1] <- BiocGenerics::start(rev_off_info)[f]-lengthPAM
+              off_end[length(off_end)+1] <- BiocGenerics::end(rev_off_info)[f]
+              off_direction[length(off_direction)+1] <- "-"
+              off_chr[length(off_chr)+1] <- seqname
+              off_mismatch[length(off_mismatch)+1] <- rev_mis_info[f]
+              off_sgRNAseq[length(off_sgRNAseq)+1] <- as.character(pattern)
+              off_offseq[length(off_offseq)+1] <- as.character(rev_off_info_full[f])
             }
           }
           individMM <- c()
           if (length(mis_info) > 0) {
             for (f in 1:length(mis_info)) {
-              individMM[[length(individMM)+1]] <- mis_info[f]
+              individMM[length(individMM)+1] <- mis_info[f]
             }
-            chrmm0_list[[length(chrmm0_list)+1]] <- sum(individMM == 0)
-            chrmm1_list[[length(chrmm1_list)+1]] <- sum(individMM == 1)
-            chrmm2_list[[length(chrmm2_list)+1]] <- sum(individMM == 2)
-            chrmm3_list[[length(chrmm3_list)+1]] <- sum(individMM == 3)
-            chrmm4_list[[length(chrmm4_list)+1]] <- sum(individMM == 4)
+            chrmm0_list[length(chrmm0_list)+1] <- sum(individMM == 0)
+            chrmm1_list[length(chrmm1_list)+1] <- sum(individMM == 1)
+            chrmm2_list[length(chrmm2_list)+1] <- sum(individMM == 2)
+            chrmm3_list[length(chrmm3_list)+1] <- sum(individMM == 3)
+            chrmm4_list[length(chrmm4_list)+1] <- sum(individMM == 4)
           } else {
-            chrmm0_list[[length(chrmm0_list)+1]] <- 0
-            chrmm1_list[[length(chrmm1_list)+1]] <- 0
-            chrmm2_list[[length(chrmm2_list)+1]] <- 0
-            chrmm3_list[[length(chrmm3_list)+1]] <- 0
-            chrmm4_list[[length(chrmm4_list)+1]] <- 0
+            chrmm0_list[length(chrmm0_list)+1] <- 0
+            chrmm1_list[length(chrmm1_list)+1] <- 0
+            chrmm2_list[length(chrmm2_list)+1] <- 0
+            chrmm3_list[length(chrmm3_list)+1] <- 0
+            chrmm4_list[length(chrmm4_list)+1] <- 0
           }
           individMM <- c()
           if (length(rev_mis_info) > 0) {
             for (f in 1:length(rev_mis_info)) {
-              individMM[[length(individMM)+1]] <- rev_mis_info[f]
+              individMM[length(individMM)+1] <- rev_mis_info[f]
             }
-            revchrmm0_list[[length(revchrmm0_list)+1]] <- sum(individMM == 0)
-            revchrmm1_list[[length(revchrmm1_list)+1]] <- sum(individMM == 1)
-            revchrmm2_list[[length(revchrmm2_list)+1]] <- sum(individMM == 2)
-            revchrmm3_list[[length(revchrmm3_list)+1]] <- sum(individMM == 3)
-            revchrmm4_list[[length(revchrmm4_list)+1]] <- sum(individMM == 4)
+            revchrmm0_list[length(revchrmm0_list)+1] <- sum(individMM == 0)
+            revchrmm1_list[length(revchrmm1_list)+1] <- sum(individMM == 1)
+            revchrmm2_list[length(revchrmm2_list)+1] <- sum(individMM == 2)
+            revchrmm3_list[length(revchrmm3_list)+1] <- sum(individMM == 3)
+            revchrmm4_list[length(revchrmm4_list)+1] <- sum(individMM == 4)
           } else {
-            revchrmm0_list[[length(revchrmm0_list)+1]] <- 0
-            revchrmm1_list[[length(revchrmm1_list)+1]] <- 0
-            revchrmm2_list[[length(revchrmm2_list)+1]] <- 0
-            revchrmm3_list[[length(revchrmm3_list)+1]] <- 0
-            revchrmm4_list[[length(revchrmm4_list)+1]] <- 0
+            revchrmm0_list[length(revchrmm0_list)+1] <- 0
+            revchrmm1_list[length(revchrmm1_list)+1] <- 0
+            revchrmm2_list[length(revchrmm2_list)+1] <- 0
+            revchrmm3_list[length(revchrmm3_list)+1] <- 0
+            revchrmm4_list[length(revchrmm4_list)+1] <- 0
           }
         }
         if (is.null(mm0_list)) {
@@ -361,7 +361,7 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
         if (off_direction[x] == "-") {
           temporary_off <- Biostrings::DNAString(off_offseq[x])
           temporary_off <- Biostrings::reverseComplement(temporary_off)
-          CFDoffsplit <- stringr::str_split(temporary_off, "", simplify = TRUE)
+          CFDoffsplit <- stringr::str_split(as.character(temporary_off), "", simplify = TRUE)
         } else {
           CFDoffsplit <- stringr::str_split(off_offseq[x], "", simplify = TRUE)
         }
@@ -370,7 +370,7 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
         for (g in 1:20) {
           if (CFDsgRNAsplit[g] != CFDoffsplit[g]) {
             index <- which(CFD_Model_Scores$Position==g & CFD_Model_Scores$sgRNA==CFDsgRNAsplit[g] & CFD_Model_Scores$DNA==CFDoffsplit[g])
-            individ_scores[[length(individ_scores)+1]] <- CFD_Model_Scores[index,4]
+            individ_scores[length(individ_scores)+1] <- CFD_Model_Scores[index,4]
           }
         }
         if (setPAM == "NGG") {
@@ -378,20 +378,20 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
           if (isTRUE(specific_PAM != "GG")){
             if (specific_PAM %in% off_model_PAMs) {
               PAM_index <- which(off_model_PAMs==specific_PAM)
-              individ_scores[[length(individ_scores)+1]] <- CFD_PAM_Scores[PAM_index,2]
+              individ_scores[length(individ_scores)+1] <- CFD_PAM_Scores[PAM_index,2]
             } else {
-              individ_scores[[length(individ_scores)+1]] <- 0
+              individ_scores[length(individ_scores)+1] <- 0
             }
           }
         }
         if (length(individ_scores) == 0) {
-          CFD_Scores[[length(CFD_Scores)+1]] <- 1
+          CFD_Scores[length(CFD_Scores)+1] <- 1
         } else {
           CFDproduct <- 1
           for (x in 1:length(individ_scores)){
             CFDproduct <- prod(individ_scores[x], CFDproduct)
           }
-          CFD_Scores[[length(CFD_Scores)+1]] <- CFDproduct
+          CFD_Scores[length(CFD_Scores)+1] <- CFDproduct
         }
       }
       CFD_Scores <- round(CFD_Scores, digits = 3)
@@ -432,22 +432,22 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
             if (p %in% S4Vectors::queryHits(olaps)) {
               geneid <- S4Vectors::mcols(gtf)$gene_id[S4Vectors::subjectHits(olaps[which(p == S4Vectors::queryHits(olaps))])]
               geneid <- unique(geneid)
-              geneidlist[[length(geneidlist)+1]] <- paste(geneid, collapse = ", ")
+              geneidlist[length(geneidlist)+1] <- paste(geneid, collapse = ", ")
               genename <- S4Vectors::mcols(gtf)$gene_name[S4Vectors::subjectHits(olaps[which(p == S4Vectors::queryHits(olaps))])]
               genename <- unique(genename)
-              genenamelist[[length(genenamelist)+1]] <- paste(genename, collapse = ", ")
+              genenamelist[length(genenamelist)+1] <- paste(genename, collapse = ", ")
               sequencetype <- S4Vectors::mcols(gtf)$type[S4Vectors::subjectHits(olaps[which(p == S4Vectors::queryHits(olaps))])]
               sequencetype <- unique(sequencetype)
-              sequencetypelist[[length(sequencetypelist)+1]] <- paste(sequencetype, collapse = ", ")
+              sequencetypelist[length(sequencetypelist)+1] <- paste(sequencetype, collapse = ", ")
               exonnumber <- S4Vectors::mcols(gtf)$exon_number[S4Vectors::subjectHits(olaps[which(p == S4Vectors::queryHits(olaps))])]
               exonnumber <- unique(exonnumber)
               exonnumber <- exonnumber[-which(is.na(exonnumber))]
-              exonnumberlist[[length(exonnumberlist)+1]] <- paste(exonnumber, collapse = ", ")
+              exonnumberlist[length(exonnumberlist)+1] <- paste(exonnumber, collapse = ", ")
             } else {
-              geneidlist[[length(geneidlist)+1]] <- "NA"
-              genenamelist[[length(genenamelist)+1]] <- "NA"
-              sequencetypelist[[length(sequencetypelist)+1]] <- "NA"
-              exonnumberlist[[length(exonnumberlist)+1]] <- "NA"
+              geneidlist[length(geneidlist)+1] <- "NA"
+              genenamelist[length(genenamelist)+1] <- "NA"
+              sequencetypelist[length(sequencetypelist)+1] <- "NA"
+              exonnumberlist[length(exonnumberlist)+1] <- "NA"
             }
           }
           S4Vectors::mcols(off_ranges)$gene_id <- geneidlist
@@ -461,7 +461,7 @@ sgRNA_design_function <- function(userseq, genomename, gtf, designprogress, user
           new_offs <- c()
           x <- 1
           for (x in 1:length(to_be_revcomped)) {
-            new_offs[[length(new_offs)+1]] <- as.character(Biostrings::reverseComplement(Biostrings::DNAString(to_be_revcomped[x])))
+            new_offs[length(new_offs)+1] <- as.character(Biostrings::reverseComplement(Biostrings::DNAString(to_be_revcomped[x])))
           }
           for (x in 1:length(revcomp_index)) {
             off_offseq[revcomp_index[x]] <- new_offs[x]

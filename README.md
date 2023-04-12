@@ -1,14 +1,22 @@
 # crispRdesignR
+<!-- badges: start -->
+[![](https://www.r-pkg.org/badges/version/crispRdesignR?color=blue)](https://cran.r-project.org/package=crispRdesignR)
+[![](https://img.shields.io/badge/doi-10.7150/jgen.41196-yellow.svg)](https://doi.org/10.7150/jgen.41196)
+<!-- badges: end -->
 
 Software used to design guide RNA sequences for CRISPR/Cas9 genome editing
 
-This software aims to provide scientifically pertinent information when designing guide RNA sequences for Cas9 genome editing. When provided a target DNA sequence for editing, a genome to check for off-targets in, and a genome annotation file (.gtf), it will output information for two separate data tables. The first table contains all information on the generated sgRNA themselves (sgRNA sequence, PAM, Direction, Start, End, GC content, Presence of Homopolymers, Self Complementarity, Effciency Score (Doench 2016), and Genomic Matches). The second table contains all information on the found off-target sequences (Original sgRNA Sequence, Chromosome, Start, End, Number of Mismatches, Direction, CFD Scores, Matched Sequence, Gene ID, Gene Name, Sequence Type, and Exon Number). This data can be generated through the command line or through crispRdesinR's UI. Additionally, a user may provide their own DNA libraries to search for off targets in and use a genome annotation file of their preference.
+This package aims to provide scientifically pertinent information when designing guide RNA sequences for Cas9 genome editing. When provided a target DNA sequence for editing, a genome to check for off-targets in, and a genome annotation file (.gtf), it will output information for two separate data tables. The first table contains information on the generated sgRNA (sgRNA sequence, PAM, Direction, Start, End, GC content, Presence of Homopolymers, Regions of Self Complementarity, Effciency Score (Doench 2016), Number of Potential Off-Target sequences, and Notes on the sgRNA). The second table contains information on the found off-target sequences (Original sgRNA Sequence, Chromosome, Start, End, Number of Mismatches, Direction, CFD Scores, Matched Sequence, Gene ID, Gene Name, Sequence Type, and Exon Number). This data can be generated through the command line or through crispRdesignR's GUI. Additionally, a user may provide their own DNA libraries and genome annotation files when searching for off-targets.
+
+For more information, please see our article in the Journal of Genomics: http://www.jgenomics.com/v08p0062.htm
+
+![crispRdesignRscreenshot4](https://user-images.githubusercontent.com/38253997/76813540-b40e9580-67ce-11ea-93c5-58f939ed6161.PNG)
 
 ## Installation and dependencies (tested in R version 3.6.2):
 
-##### Install crispRdesignR, where "path_to_directory" is the path of the decompressed crispRdesignR-master folder
+##### Install crispRdesignR v1.1.6 through CRAN
 
-`install.packages(path_to_directory, repos = NULL, type="source")`
+`install.packages("crispRdesignR")`
 
 ## Quick start with the GUI
 
@@ -24,13 +32,15 @@ Using the GUI version:
 
 - `crispRdesignRUI()`
 
-- Click on the “UseFASTA or txt file as target sequence” button and choose the DAK1.fasta or DAK1_short.txt file, or copy and paste the sequence in the box.
+- Click on the “Use FASTA or txt file as target sequence” button and choose the DAK1.fasta or DAK1_short.txt file, or copy and paste the sequence in the box.
 
 - select the Saccharomyces cerevisiae genome
 
 - browse to choose the .gtf file Saccharomyces_cerevisiae.R64-1-1.92.gtf.gz
 
 - click on the Find sgRNA button
+
+![crispRdesignRscreenshot5](https://user-images.githubusercontent.com/38253997/76813686-20899480-67cf-11ea-89e3-447eef26d21a.PNG)
 
 Additional Genome annotation files can be found here: https://useast.ensembl.org/info/data/ftp/index.html
 
